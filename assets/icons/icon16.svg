@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- 紫色背景 -->
+  <rect width="16" height="16" fill="#8B5CF6" rx="2"/>
+  
+  <!-- 蝴蝶身体 -->
+  <ellipse cx="8" cy="8" rx="0.3" ry="3" fill="white"/>
+  
+  <!-- 蝴蝶触角 -->
+  <path d="M7.8 5.2 Q7.2 4.8 7 4.5" stroke="white" stroke-width="0.2" fill="none"/>
+  <path d="M8.2 5.2 Q8.8 4.8 9 4.5" stroke="white" stroke-width="0.2" fill="none"/>
+  
+  <!-- 上翅膀 -->
+  <path d="M8 6.2 Q5.6 4.4 4.4 5.6 Q3.8 6.2 4.4 7.2 Q5.6 8.1 8 7.2 Z" fill="white"/>
+  <path d="M8 6.2 Q10.4 4.4 11.6 5.6 Q12.2 6.2 11.6 7.2 Q10.4 8.1 8 7.2 Z" fill="white"/>
+  
+  <!-- 下翅膀 -->
+  <path d="M8 8.8 Q6 9.4 5 10.6 Q4.4 11.5 5.2 12.2 Q6.5 11.9 8 10.6 Z" fill="white"/>
+  <path d="M8 8.8 Q10 9.4 11 10.6 Q11.6 11.5 10.8 12.2 Q9.5 11.9 8 10.6 Z" fill="white"/>
+</svg>

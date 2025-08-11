@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Popup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      width: 300px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .test-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    .result {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+    .error {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+    .success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+  <h3>Debug More Settings Button</h3>
+  
+  <button type="button" class="test-btn" id="test-openOptionsPage">
+    Test chrome.runtime.openOptionsPage()
+  </button>
+  
+  <button type="button" class="test-btn" id="test-createTab">
+    Test chrome.tabs.create()
+  </button>
+  
+  <button type="button" class="test-btn" id="test-getURL">
+    Test chrome.runtime.getURL()
+  </button>
+  
+  <button type="button" class="test-btn" id="test-permissions">
+    Check Permissions
+  </button>
+  
+  <div id="results"></div>
+  
+  <script>
+    function addResult(message, isError = false) {
+      const resultsDiv = document.getElementById('results');
+      const resultDiv = document.createElement('div');
+      resultDiv.className = `result ${isError ? 'error' : 'success'}`;
+      resultDiv.textContent = message;
+      resultsDiv.appendChild(resultDiv);
+    }
+    
+    // Test chrome.runtime.openOptionsPage
+    document.getElementById('test-openOptionsPage').addEventListener('click', () => {
+      try {
+        if (chrome.runtime.openOptionsPage) {
+          chrome.runtime.openOptionsPage((result) => {
+            if (chrome.runtime.lastError) {
+              addResult(`openOptionsPage error: ${chrome.runtime.lastError.message}`, true);
+            } else {
+              addResult('openOptionsPage succeeded');
+            }
+          });
+        } else {
+          addResult('chrome.runtime.openOptionsPage is not available', true);
+        }
+      } catch (error) {
+        addResult(`openOptionsPage exception: ${error.message}`, true);
+      }
+    });
+    
+    // Test chrome.tabs.create
+    document.getElementById('test-createTab').addEventListener('click', () => {
+      try {
+        const optionsUrl = chrome.runtime.getURL('options.html');
+        chrome.tabs.create({ url: optionsUrl }, (tab) => {
+          if (chrome.runtime.lastError) {
+            addResult(`tabs.create error: ${chrome.runtime.lastError.message}`, true);
+          } else {
+            addResult(`tabs.create succeeded, tab ID: ${tab.id}`);
+          }
+        });
+      } catch (error) {
+        addResult(`tabs.create exception: ${error.message}`, true);
+      }
+    });
+    
+    // Test chrome.runtime.getURL
+    document.getElementById('test-getURL').addEventListener('click', () => {
+      try {
+        const optionsUrl = chrome.runtime.getURL('options.html');
+        addResult(`Options URL: ${optionsUrl}`);
+      } catch (error) {
+        addResult(`getURL exception: ${error.message}`, true);
+      }
+    });
+    
+    // Check permissions
+    document.getElementById('test-permissions').addEventListener('click', () => {
+      chrome.permissions.getAll((permissions) => {
+        addResult(`Permissions: ${JSON.stringify(permissions.permissions)}`);
+        addResult(`Origins: ${JSON.stringify(permissions.origins)}`);
+      });
+    });
+    
+    // Check if options.html exists
+    fetch(chrome.runtime.getURL('options.html'))
+      .then(response => {
+        if (response.ok) {
+          addResult('options.html file exists and is accessible');
+        } else {
+          addResult(`options.html not accessible: ${response.status}`, true);
+        }
+      })
+      .catch(error => {
+        addResult(`Error checking options.html: ${error.message}`, true);
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- 紫色背景 -->
+  <rect width="128" height="128" fill="#8B5CF6" rx="16"/>
+  
+  <!-- 蝴蝶身体 -->
+  <ellipse cx="64" cy="64" rx="2" ry="24" fill="white"/>
+  
+  <!-- 蝴蝶触角 -->
+  <path d="M62 42 Q58 38 56 36" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M66 42 Q70 38 72 36" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <circle cx="56" cy="36" r="1.5" fill="white"/>
+  <circle cx="72" cy="36" r="1.5" fill="white"/>
+  
+  <!-- 上翅膀 -->
+  <path d="M64 50 Q45 35 35 45 Q30 50 35 58 Q45 65 64 58 Z" fill="white" opacity="0.95"/>
+  <path d="M64 50 Q83 35 93 45 Q98 50 93 58 Q83 65 64 58 Z" fill="white" opacity="0.95"/>
+  
+  <!-- 下翅膀 -->
+  <path d="M64 70 Q48 75 40 85 Q35 92 42 98 Q52 95 64 85 Z" fill="white" opacity="0.9"/>
+  <path d="M64 70 Q80 75 88 85 Q93 92 86 98 Q76 95 64 85 Z" fill="white" opacity="0.9"/>
+  
+  <!-- 翅膀装饰点 -->
+  <circle cx="45" cy="52" r="3" fill="#8B5CF6" opacity="0.6"/>
+  <circle cx="83" cy="52" r="3" fill="#8B5CF6" opacity="0.6"/>
+  <circle cx="50" cy="82" r="2" fill="#8B5CF6" opacity="0.4"/>
+  <circle cx="78" cy="82" r="2" fill="#8B5CF6" opacity="0.4"/>
+  
+  <!-- 翅膀边缘高光 -->
+  <path d="M64 50 Q45 35 35 45 Q30 50 35 58" stroke="white" stroke-width="0.5" fill="none" opacity="0.7"/>
+  <path d="M64 50 Q83 35 93 45 Q98 50 93 58" stroke="white" stroke-width="0.5" fill="none" opacity="0.7"/>
+</svg>

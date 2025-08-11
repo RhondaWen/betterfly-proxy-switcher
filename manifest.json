@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Betterfly Proxy Switcher",
+  "version": "1.1",
+  "description": "A comprehensive proxy switcher with presets and auto-switching rules",
+  "permissions": [
+    "proxy",
+    "storage",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "Betterfly Proxy Switcher"
+  },
+  "options_page": "src/options.html",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

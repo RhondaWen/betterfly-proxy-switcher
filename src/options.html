@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy Switcher - Settings</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2em;
+      font-weight: 300;
+    }
+
+    .header p {
+      margin: 10px 0 0 0;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background-color: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #5a6fd8;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+      transform: translateY(-1px);
+    }
+
+    .preset-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preset-info h4 {
+      margin: 0 0 5px 0;
+      color: #333;
+    }
+
+    .preset-info p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .preset-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .preset-actions .btn {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .status-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+
+    .help-text {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .rule-status {
+      font-size: 12px;
+      margin-left: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .rule-status.active {
+      color: #28a745;
+      animation: pulse 2s infinite;
+    }
+
+    .rule-status.inactive {
+      color: #6c757d;
+    }
+
+    .rule-status.disabled {
+      color: #dc3545;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .rule-disabled {
+      opacity: 0.6;
+      background-color: #f8f9fa;
+    }
+
+    .rule-disabled-text {
+      color: #6c757d;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 30px;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      border-bottom-color: #667eea;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .tab:hover {
+      background-color: #f8f9fa;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Betterfly Proxy Settings</h1>
+      <p>Configure your proxy settings and manage presets</p>
+    </div>
+
+    <div class="content">
+      <div id="status" class="status-message"></div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="presets">Proxy Presets</div>
+        <div class="tab" data-tab="advanced">Advanced Settings</div>
+        <div class="tab" data-tab="rules">Auto Switch Rules</div>
+        <div class="tab" data-tab="backup">Backup & Restore</div>
+      </div>
+
+      <!-- Presets Tab -->
+      <div id="presets-tab" class="tab-content active">
+        <div class="section">
+          <h2>Manage Proxy Presets</h2>
+          
+          <div class="form-group">
+            <label for="preset-name">Preset Name:</label>
+            <input type="text" id="preset-name" placeholder="Enter preset name">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="preset-scheme">Scheme:</label>
+              <select id="preset-scheme">
+                <option value="http">HTTP</option>
+                <option value="https">HTTPS</option>
+                <option value="socks4">SOCKS4</option>
+                <option value="socks5">SOCKS5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="preset-host">Host:</label>
+              <input type="text" id="preset-host" placeholder="proxy.example.com">
+            </div>
+            <div class="form-group">
+              <label for="preset-port">Port:</label>
+              <input type="number" id="preset-port" placeholder="8080">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="preset-username">Username (optional):</label>
+              <input type="text" id="preset-username" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <label for="preset-password">Password (optional):</label>
+              <input type="password" id="preset-password" placeholder="Password">
+            </div>
+          </div>
+
+          <button type="button" id="save-preset" class="btn btn-primary">Save Preset</button>
+          <button type="button" id="test-preset" class="btn btn-secondary">Test Connection</button>
+
+          <div id="presets-list">
+            <!-- Presets will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Settings Tab -->
+      <div id="advanced-tab" class="tab-content">
+        <div class="section">
+          <h2>Advanced Proxy Settings</h2>
+          
+          <div class="form-group">
+            <label for="bypass-list">Bypass List:</label>
+            <textarea id="bypass-list" rows="4" placeholder="localhost&#10;127.0.0.1&#10;*.local&#10;company.com"></textarea>
+            <div class="help-text">Enter domains or IP addresses that should bypass the proxy, one per line. Use * for wildcards.</div>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="bypass-local">
+            <label for="bypass-local">Bypass proxy for local addresses</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="auto-detect">
+            <label for="auto-detect">Automatically detect proxy settings</label>
+          </div>
+
+          <button type="button" id="save-advanced" class="btn btn-primary">Save Advanced Settings</button>
+        </div>
+      </div>
+
+      <!-- Auto Switch Rules Tab -->
+      <div id="rules-tab" class="tab-content">
+        <div class="section">
+          <h2>Automatic Switching Rules</h2>
+          <p>Configure rules to automatically switch proxies based on the website you're visiting.</p>
+          
+          <div class="form-group">
+            <label for="rule-pattern">URL Pattern:</label>
+            <input type="text" id="rule-pattern" placeholder="*.example.com">
+            <div class="help-text">Use * for wildcards. Examples: *.google.com, https://secure.site.com/*</div>
+          </div>
+
+          <div class="form-group">
+            <label for="rule-preset">Proxy Preset:</label>
+            <select id="rule-preset">
+              <option value="direct">Direct Connection</option>
+              <!-- Presets will be loaded here -->
+            </select>
+          </div>
+
+          <button type="button" id="add-rule" class="btn btn-primary">Add Rule</button>
+          <button type="button" id="refresh-status" class="btn btn-secondary" style="margin-left: 10px;">Refresh Status</button>
+
+          <div class="help-text" style="margin-top: 15px;">
+            <strong>Status indicators:</strong>
+            <span style="color: #28a745;">● Active</span> (rule matches current tab) |
+            <span style="color: #6c757d;">● Inactive</span> (rule not matching) |
+            <span style="color: #dc3545;">● Disabled</span> (rule is disabled)
+          </div>
+
+          <div id="rules-list">
+            <!-- Rules will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Backup & Restore Tab -->
+      <div id="backup-tab" class="tab-content">
+        <div class="section">
+          <h2>Backup & Restore</h2>
+          
+          <div class="form-group">
+            <button type="button" id="export-config" class="btn btn-success">Export Configuration</button>
+            <div class="help-text">Download your current proxy settings and presets as a JSON file.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="import-file">Import Configuration:</label>
+            <input type="file" id="import-file" accept=".json">
+            <button type="button" id="import-config" class="btn btn-secondary">Import</button>
+            <div class="help-text">Upload a previously exported configuration file.</div>
+          </div>
+
+          <div class="form-group">
+            <button type="button" id="reset-all" class="btn btn-danger">Reset All Settings</button>
+            <div class="help-text">This will delete all presets and reset to default settings.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/options.js"></script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Simplified Popup</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 8px;
+      width: 200px;
+      background-color: #ffffff;
+      color: #333;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .proxy-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      margin-bottom: 2px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+      border: 1px solid transparent;
+    }
+
+    .proxy-item:hover {
+      background-color: #f0f0f0;
+      border-color: #ddd;
+    }
+
+    .proxy-item.active {
+      background-color: #007acc;
+      color: white;
+      border-color: #005a9e;
+    }
+
+    .proxy-item.active:hover {
+      background-color: #005a9e;
+    }
+
+    .proxy-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .icon-direct {
+      background-color: #28a745;
+    }
+
+    .icon-system {
+      background-color: #6c757d;
+    }
+
+    .icon-custom {
+      background-color: #007acc;
+    }
+
+    .icon-auto {
+      background-color: #17a2b8;
+    }
+
+    .proxy-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .proxy-status {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 4px 0;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .settings-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .debug-info {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+
+    .debug-log {
+      max-height: 100px;
+      overflow-y: auto;
+      background-color: #000;
+      color: #0f0;
+      padding: 4px;
+      font-family: monospace;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="debug-info">
+    <strong>Debug Mode</strong><br>
+    <div id="current-status">Loading...</div>
+  </div>
+
+  <div class="proxy-item" data-preset="direct" id="direct-item">
+    <div class="proxy-icon icon-direct">🌐</div>
+    <div class="proxy-name">直接连接</div>
+    <div class="proxy-status" id="direct-status"></div>
+  </div>
+
+  <div class="proxy-item" data-preset="system" id="system-item">
+    <div class="proxy-icon icon-system">⚙️</div>
+    <div class="proxy-name">系统代理</div>
+    <div class="proxy-status" id="system-status"></div>
+  </div>
+
+  <div class="proxy-item" data-preset="auto" id="auto-item">
+    <div class="proxy-icon icon-auto">🔄</div>
+    <div class="proxy-name">(外部情景模式)</div>
+    <div class="proxy-status">auto switch</div>
+  </div>
+
+  <div id="custom-presets">
+    <!-- 自定义预设将在这里动态加载 -->
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="settings-item" id="options">
+    <div class="settings-icon">🔧</div>
+    <div>选项</div>
+  </div>
+
+  <div class="debug-info">
+    <strong>Debug Log:</strong>
+    <div class="debug-log" id="debug-log"></div>
+  </div>
+
+  <script>
+    // Debug logging
+    function debugLog(message) {
+      const logDiv = document.getElementById('debug-log');
+      const timestamp = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(`[DEBUG] ${message}`);
+    }
+
+    // Update status display
+    function updateStatus(message) {
+      document.getElementById('current-status').textContent = message;
+      debugLog(`Status: ${message}`);
+    }
+
+    // Load presets and current settings when popup opens
+    document.addEventListener('DOMContentLoaded', () => {
+      debugLog('DOM loaded, initializing...');
+      updateStatus('Initializing...');
+      
+      loadCustomPresets();
+      loadCurrentSettings();
+      setupEventListeners();
+      
+      updateStatus('Ready');
+    });
+
+    // Load saved custom presets
+    function loadCustomPresets() {
+      debugLog('Loading custom presets...');
+      chrome.storage.sync.get(['proxyPresets'], (result) => {
+        const presets = result.proxyPresets || {};
+        const customPresetsContainer = document.getElementById('custom-presets');
+        
+        debugLog(`Found ${Object.keys(presets).length} presets`);
+        
+        // Clear existing custom presets
+        customPresetsContainer.innerHTML = '';
+        
+        // Add saved presets
+        Object.keys(presets).forEach(name => {
+          const preset = presets[name];
+          const presetItem = document.createElement('div');
+          presetItem.className = 'proxy-item custom-preset';
+          presetItem.setAttribute('data-preset', name);
+          presetItem.innerHTML = `
+            <div class="proxy-icon icon-custom">🔗</div>
+            <div class="proxy-name">${name}</div>
+            <div class="proxy-status">${preset.scheme}://${preset.host}:${preset.port}</div>
+          `;
+          customPresetsContainer.appendChild(presetItem);
+          debugLog(`Added preset: ${name}`);
+        });
+      });
+    }
+
+    // Load current proxy settings and update UI
+    function loadCurrentSettings() {
+      debugLog('Loading current settings...');
+      chrome.runtime.sendMessage({ action: "getCurrentProxy" }, (response) => {
+        debugLog(`Current proxy response: ${JSON.stringify(response)}`);
+        updateActiveProxyItem(response);
+      });
+    }
+
+    // Update active proxy item based on current settings
+    function updateActiveProxyItem(response) {
+      debugLog('Updating active proxy item...');
+      
+      // Remove active class from all items
+      document.querySelectorAll('.proxy-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      if (response && response.config) {
+        const config = response.config;
+        debugLog(`Proxy config mode: ${config.mode}`);
+        
+        if (config.mode === 'system') {
+          const systemItem = document.getElementById('system-item');
+          if (systemItem) {
+            systemItem.classList.add('active');
+            updateStatus('System proxy active');
+            debugLog('System proxy activated in UI');
+          }
+        } else if (config.mode === 'fixed_servers' && config.rules && config.rules.singleProxy) {
+          const proxy = config.rules.singleProxy;
+          debugLog(`Fixed proxy: ${proxy.scheme}://${proxy.host}:${proxy.port}`);
+          
+          chrome.storage.sync.get(['proxyPresets'], (result) => {
+            const presets = result.proxyPresets || {};
+            let foundMatch = false;
+            
+            for (const [name, preset] of Object.entries(presets)) {
+              if (preset.host === proxy.host && 
+                  preset.port === proxy.port && 
+                  preset.scheme === proxy.scheme) {
+                const presetItem = document.querySelector(`[data-preset="${name}"]`);
+                if (presetItem) {
+                  presetItem.classList.add('active');
+                  foundMatch = true;
+                  updateStatus(`Preset "${name}" active`);
+                  debugLog(`Preset "${name}" activated in UI`);
+                }
+                break;
+              }
+            }
+            
+            if (!foundMatch) {
+              updateStatus('Custom proxy active');
+              debugLog('No matching preset found for current proxy');
+            }
+          });
+        } else {
+          const directItem = document.getElementById('direct-item');
+          if (directItem) {
+            directItem.classList.add('active');
+            updateStatus('Direct connection active');
+            debugLog('Direct connection activated in UI');
+          }
+        }
+      } else {
+        const directItem = document.getElementById('direct-item');
+        if (directItem) {
+          directItem.classList.add('active');
+          updateStatus('Direct connection (default)');
+          debugLog('Default to direct connection in UI');
+        }
+      }
+    }
+
+    // Setup all event listeners
+    function setupEventListeners() {
+      debugLog('Setting up event listeners...');
+      
+      // Handle proxy item clicks
+      document.addEventListener('click', (e) => {
+        const proxyItem = e.target.closest('.proxy-item');
+        if (proxyItem) {
+          const preset = proxyItem.getAttribute('data-preset');
+          debugLog(`Clicked proxy item: ${preset}`);
+          handleProxySelection(preset);
+        }
+      });
+
+      // Open options page
+      document.getElementById('options').addEventListener('click', () => {
+        debugLog('Options clicked');
+        try {
+          if (chrome.runtime.openOptionsPage) {
+            chrome.runtime.openOptionsPage((result) => {
+              if (chrome.runtime.lastError) {
+                debugLog(`openOptionsPage error: ${chrome.runtime.lastError.message}`);
+                chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
+              } else {
+                debugLog('Options page opened successfully');
+              }
+            });
+          } else {
+            chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
+            debugLog('Options page opened via tabs.create');
+          }
+        } catch (error) {
+          debugLog(`Error opening options: ${error.message}`);
+        }
+      });
+    }
+
+    // Handle proxy selection
+    function handleProxySelection(preset) {
+      debugLog(`Handling proxy selection: ${preset}`);
+      updateStatus(`Switching to ${preset}...`);
+      
+      if (preset === 'direct') {
+        chrome.runtime.sendMessage({
+          action: "clearProxy"
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            debugLog(`Error clearing proxy: ${chrome.runtime.lastError.message}`);
+            updateStatus('Error clearing proxy');
+          } else {
+            debugLog(`Direct connection response: ${JSON.stringify(response)}`);
+            updateStatus('Direct connection activated');
+            setTimeout(() => loadCurrentSettings(), 100);
+          }
+        });
+      } else if (preset === 'system') {
+        chrome.runtime.sendMessage({
+          action: "setSystemProxy"
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            debugLog(`Error setting system proxy: ${chrome.runtime.lastError.message}`);
+            updateStatus('Error setting system proxy');
+          } else {
+            debugLog(`System proxy response: ${JSON.stringify(response)}`);
+            updateStatus('System proxy activated');
+            setTimeout(() => loadCurrentSettings(), 100);
+          }
+        });
+      } else if (preset === 'auto') {
+        debugLog('Auto switch mode - not implemented yet');
+        updateStatus('Auto mode (not implemented)');
+        updateActiveProxyItem({ config: { mode: 'auto' } });
+      } else {
+        chrome.storage.sync.get(['proxyPresets'], (result) => {
+          const presets = result.proxyPresets || {};
+          const selectedPreset = presets[preset];
+          
+          if (selectedPreset) {
+            debugLog(`Applying preset: ${JSON.stringify(selectedPreset)}`);
+            chrome.runtime.sendMessage({
+              action: "setProxy",
+              scheme: selectedPreset.scheme,
+              host: selectedPreset.host,
+              port: selectedPreset.port
+            }, (response) => {
+              if (chrome.runtime.lastError) {
+                debugLog(`Error setting proxy: ${chrome.runtime.lastError.message}`);
+                updateStatus('Error setting proxy');
+              } else {
+                debugLog(`Preset response: ${JSON.stringify(response)}`);
+                updateStatus(`Preset "${preset}" activated`);
+                setTimeout(() => loadCurrentSettings(), 100);
+              }
+            });
+          } else {
+            debugLog(`Preset not found: ${preset}`);
+            updateStatus('Preset not found');
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
