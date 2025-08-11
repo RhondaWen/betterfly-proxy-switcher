@@ -50,7 +50,6 @@
 ├── LICENSE                     # 开源许可证
 ├── CHANGELOG.md                # 版本更新日志
 ├── CONTRIBUTING.md             # 贡献指南
-├── RELEASE.md                  # 发布指南
 └── README.md                   # 项目说明文档
 ```
 

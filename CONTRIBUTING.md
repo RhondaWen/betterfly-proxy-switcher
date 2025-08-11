@@ -34,7 +34,7 @@
 ### 本地开发
 1. 克隆项目：
    ```bash
-   git clone https://github.com/your-username/betterfly-proxy-switcher.git
+   git clone https://github.com/RhondaWen/betterfly-proxy-switcher.git
    cd betterfly-proxy-switcher
    ```
 
